@@ -77,8 +77,8 @@ void keyboard_post_init_user(void) {
 
 enum layer {
     NORMAL,
-    FUNC,
-    NAS,
+    NUMNAV,
+    SYMB,
     MBO = MH_AUTO_BUTTONS_LAYER,
 };
 
@@ -86,39 +86,39 @@ const uint16_t PROGMEM keymaps[DYNAMIC_KEYMAP_LAYER_COUNT][MATRIX_ROWS][MATRIX_C
     [NORMAL] = LAYOUT(
         /*Center           North           East            South           West*/
 
-        /*R1*/ KC_J,            KC_U,           KC_QUOTE,       KC_M,           KC_H, XXXXXXX,
-        /*R2*/ KC_K,            KC_I,           KC_COLON,       KC_COMMA,       KC_Y, XXXXXXX,
-        /*R3*/ KC_L,            KC_O,           KC_LGUI,        KC_DOT,         KC_N, XXXXXXX,
-        /*R4*/ KC_SEMICOLON,    KC_P,           KC_BSLS,        KC_SLASH,       KC_RBRC, XXXXXXX,
+        /*R1*/ KC_A,            KC_DOT,         KC_MINS,        KC_U,           KC_COMM, XXXXXXX,
+        /*R2*/ KC_E,            KC_AMPR,        KC_SLSH,        KC_O,           KC_AT, XXXXXXX,
+        /*R3*/ KC_I,            KC_Z,           XXXXXXX,        KC_DOT,         KC_N, XXXXXXX,
+        /*R4*/ KC_H,            KC_Q,           XXXXXXX,        KC_B,           KC_QUOT, XXXXXXX,
 
-        /*L1*/ KC_F,            KC_R,           KC_G,           KC_V,           KC_DOUBLE_QUOTE, XXXXXXX,
-        /*L2*/ KC_D,            KC_E,           KC_T,           KC_C,           KC_GRAVE, XXXXXXX,
-        /*L3*/ KC_S,            KC_W,           KC_B,           KC_X,           KC_ESC, XXXXXXX,
-        /*L4*/ KC_A,            KC_Q,           KC_LBRC,        KC_Z,           KC_DEL, XXXXXXX,
+        /*L1*/ KC_T,            KC_P,           KC_W,           KC_D,           KC_V, XXXXXXX,
+        /*L2*/ KC_N,            KC_M,           XXXXXXX,        KC_L,           XXXXXXX, XXXXXXX,
+        /*L3*/ KC_S,            KC_G,           XXXXXXX,        KC_F,           XXXXXXX, XXXXXXX,
+        /*L4*/ KC_C,            KC_J,           XXXXXXX,        KC_X,           KC_ESC, XXXXXXX,
 
-        /*     Down            Pad            Up             Nail           Knuckle    DoubleDown*/
-        /*RT*/ MO(NAS),         KC_SPACE,       TO(FUNC),       KC_BSPC,        KC_LALT,     XXXXXXX,
-        /*LT*/ KC_LSFT,         KC_ENTER,       TO(NORMAL),          KC_TAB,         KC_LCTL,     KC_CAPS
+        /*     Down                  Pad                    Up             Nail           Knuckle    DoubleDown*/
+        /*RT*/ LT(NUMNAV,KC_SPACE),  OSM(MOD_LSFT),         KC_ENTER,      QK_REP,        XXXXXXX,     XXXXXXX,
+        /*LT*/ LT(SYMB, KC_R),       LT(MACROS,KC_BSPC),    TO(NORMAL),    KC_DEL,        KC_TAB,     XXXXXXX
         ),
 
-    [FUNC] = LAYOUT(
-        /*Center           North           East            South           West*/
-        /*R1*/ KC_HOME,         KC_UP,          KC_RIGHT,       KC_DOWN,        KC_LEFT, XXXXXXX,
-        /*R2*/ XXXXXXX,         KC_F8,          XXXXXXX,        KC_F7,          KC_END, XXXXXXX,
-        /*R3*/ KC_PSCR,         KC_F10,         KC_LGUI,        KC_F9,          KC_INS, XXXXXXX,
-        /*R4*/ KC_PAUSE,        KC_PGUP,        KC_F12,         KC_PGDN,        KC_F11, XXXXXXX,
+    [NUMNAV] = LAYOUT(
+        /*Center                North           East            South           West*/
+        /*R1*/ KC_LEFT,         KC_HOME,        KC_RIGHT,       KC_RSFT,        KC_LEFT, XXXXXXX,
+        /*R2*/ KC_UP,           KC_PGUP,        XXXXXXX,        KC_RCTL,        KC_END, XXXXXXX,
+        /*R3*/ KC_DOWN,         KC_PGDN,        KC_LGUI,        KC_RALT,        KC_INS, XXXXXXX,
+        /*R4*/ KC_RIGHT,        KC_END,         KC_F12,         KC_RGUI,        KC_F11, XXXXXXX,
 
-        /*L1*/ KC_HOME,         KC_UP,          KC_RIGHT,       KC_DOWN,        KC_LEFT, XXXXXXX,
-        /*L2*/ XXXXXXX,         KC_F6,          XXXXXXX,        KC_F5,          XXXXXXX, XXXXXXX,
-        /*L3*/ XXXXXXX,         KC_F4,          XXXXXXX,        KC_F3,          KC_ESC, XXXXXXX,
-        /*L4*/ XXXXXXX,         KC_F2,          XXXXXXX,        KC_F1,          KC_DEL, XXXXXXX,
+        /*L1*/ KC_3,         KC_6,              KC_EQL,         KC_9,           KC_LEFT, XXXXXXX,
+        /*L2*/ KC_2,         KC_5,              XXXXXXX,        KC_8,           LSFT(KC_8), XXXXXXX,
+        /*L3*/ KC_1,         KC_4,              XXXXXXX,        KC_7,           KC_MINS, XXXXXXX,
+        /*L4*/ KC_0,         XXXXXXX,           XXXXXXX,        KC_DOT,         LSFT(KC_EQL), XXXXXXX,
 
         /*     Down            Pad            Up             Nail           Knuckle    DoubleDown*/
-        /*RT*/ MO(NAS),         KC_SPACE,       _______,       KC_BSPC,      KC_LALT, _______,
-        /*LT*/ KC_LSFT,       KC_ENTER,         _______, KC_TAB,         KC_LCTL, _______
+        /*RT*/ _______,        _______,       _______,       _______,       _______,    _______,
+        /*LT*/ _______,        _______,       _______,       _______,       _______,    _______
         ),
 
-    [NAS] = LAYOUT(
+    [SYMB] = LAYOUT(
         /*Center           North           East            South           West*/
         /*R1*/ KC_7,            KC_AMPR,        KC_UNDS,        KC_KP_PLUS,     KC_6, XXXXXXX,
         /*R2*/ KC_8,            KC_KP_ASTERISK, KC_COLON,       KC_COMMA,       KC_CIRCUMFLEX, XXXXXXX,
