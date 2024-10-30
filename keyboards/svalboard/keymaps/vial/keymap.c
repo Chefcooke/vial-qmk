@@ -28,12 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LAYER_COLOR(name, color) rgblight_segment_t const (name)[] = RGBLIGHT_LAYER_SEGMENTS({0, 2, color})
 
 LAYER_COLOR(layer0_colors, HSV_GREEN); // NORMAL
-LAYER_COLOR(layer1_colors, HSV_GREEN); // NORMAL_HOLD
-LAYER_COLOR(layer2_colors, HSV_ORANGE); // FUNC
-LAYER_COLOR(layer3_colors, HSV_ORANGE); // FUNC_HOLD
-LAYER_COLOR(layer4_colors, HSV_AZURE); // NAS
-LAYER_COLOR(layer5_colors, HSV_AZURE); // would be NAS hold
-LAYER_COLOR(layer6_colors, HSV_RED); // maybe 10kp
+LAYER_COLOR(layer1_colors, HSV_ORANGE); // FUNC
+LAYER_COLOR(layer2_colors, HSV_AZURE); // NAS
+LAYER_COLOR(layer3_colors, HSV_CORAL); // FKEYS
+LAYER_COLOR(layer4_colors, HSV_YELLOW); // use for NORMAL hold?
+LAYER_COLOR(layer5_colors, HSV_TEAL); // use for FUNC hold?
+LAYER_COLOR(layer6_colors, HSV_RED); // use for NAS hold 
 LAYER_COLOR(layer7_colors, HSV_RED);
 LAYER_COLOR(layer8_colors, HSV_PINK);
 LAYER_COLOR(layer9_colors, HSV_PURPLE);
@@ -64,24 +64,19 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
-
-
-void keyboard_post_init_user(void) {
-  // Customise these values if you need to debug the matrix
-  //debug_enable=true;
-  //debug_matrix=true;
-  //debug_keyboard=true;
-  //debug_mouse=true;
-  rgblight_layers = sval_rgb_layers;
-}
-
 enum layer {
     NORMAL,
     FUNC,
     NAS,
+    BOARD_CONFIG,
     MBO = MH_AUTO_BUTTONS_LAYER,
 };
 
+#if __has_include("keymap_all.h")
+#include "keymap_all.h"
+#else
+int sval_macro_size = 0;
+uint8_t sval_macros[] = {0};
 const uint16_t PROGMEM keymaps[DYNAMIC_KEYMAP_LAYER_COUNT][MATRIX_ROWS][MATRIX_COLS] = {
     [NORMAL] = LAYOUT(
         /*Center           North           East            South           West*/
@@ -111,7 +106,7 @@ const uint16_t PROGMEM keymaps[DYNAMIC_KEYMAP_LAYER_COUNT][MATRIX_ROWS][MATRIX_C
         /*L1*/ KC_HOME,         KC_UP,          KC_RIGHT,       KC_DOWN,        KC_LEFT, XXXXXXX,
         /*L2*/ XXXXXXX,         KC_F6,          XXXXXXX,        KC_F5,          XXXXXXX, XXXXXXX,
         /*L3*/ XXXXXXX,         KC_F4,          XXXXXXX,        KC_F3,          KC_ESC, XXXXXXX,
-        /*L4*/ XXXXXXX,         KC_F2,          XXXXXXX,        KC_F1,          KC_DEL, XXXXXXX,
+        /*L4*/ TO(BOARD_CONFIG), KC_F2,         XXXXXXX,        KC_F1,          KC_DEL, XXXXXXX,
 
         /*     Down            Pad            Up             Nail           Knuckle    DoubleDown*/
         /*RT*/ MO(NAS),         KC_SPACE,       _______,       KC_BSPC,      KC_LALT, _______,
@@ -135,6 +130,23 @@ const uint16_t PROGMEM keymaps[DYNAMIC_KEYMAP_LAYER_COUNT][MATRIX_ROWS][MATRIX_C
         /*LT*/ KC_LSFT,         KC_ENTER,       _______,        KC_TAB,         KC_LCTL, _______
         ),
 
+    [BOARD_CONFIG] = LAYOUT(
+        /*                  Center              North               East                South               West                (XXX)               */
+        /* R1 */            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            -1,
+        /* R2 */            KC_TRNS,            RGB_VAI,            KC_TRNS,            RGB_VAD,            KC_TRNS,            -1,
+        /* R3 */            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            -1,
+        /* R4 */            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            -1,
+        
+        /* L1 */            SV_OUTPUT_STATUS,       KC_TRNS,             KC_TRNS,         KC_TRNS,            KC_TRNS,            -1,
+        /* L2 */            SV_RIGHT_SCROLL_TOGGLE, SV_RIGHT_DPI_INC,    KC_TRNS,         SV_RIGHT_DPI_DEC,   KC_TRNS,            -1,
+        /* L3 */            SV_LEFT_SCROLL_TOGGLE,  SV_LEFT_DPI_INC,     KC_TRNS,         SV_LEFT_DPI_DEC,    KC_TRNS,            -1,
+        /* L4 */            SV_MH_CHANGE_TIMEOUTS,  SV_TOGGLE_ACHORDION, KC_TRNS,         KC_TRNS,            KC_TRNS,            -1,
+        
+        /*                  Down                Pad                 Up                  Nail                Knuckle             Double Down         */
+        /* RT */            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,
+        /* LT */            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS,            KC_TRNS
+      ),
+
     [MBO] = LAYOUT(
         /*Center           North           East            South           West*/
         /*R1*/ KC_BTN1,        KC_TRNS,       KC_TRNS,       KC_TRNS,       KC_TRNS, XXXXXXX,
@@ -151,6 +163,7 @@ const uint16_t PROGMEM keymaps[DYNAMIC_KEYMAP_LAYER_COUNT][MATRIX_ROWS][MATRIX_C
         )
 
 };
+#endif
 
 bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
                      uint16_t other_keycode, keyrecord_t* other_record) {
@@ -162,3 +175,27 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
     return achordion_opposite_hands(tap_hold_record, other_record);
 }
 
+void keyboard_post_init_user(void) {
+  // Customise these values if you need to debug the matrix
+  //debug_enable=true;
+  //debug_matrix=true;
+  //debug_keyboard=true;
+  //debug_mouse=true;
+  rgblight_layers = sval_rgb_layers;
+
+#if __has_include("keymap_all.h")
+  // Check if we've already got our macros set. At this point we're just
+  // seeing if ANY macro is defined.
+  if (sval_macro_size > 0) {
+    uint8_t get[DYNAMIC_KEYMAP_MACRO_COUNT];
+    uint8_t check[DYNAMIC_KEYMAP_MACRO_COUNT];
+
+    memset(check, 0, DYNAMIC_KEYMAP_MACRO_COUNT);
+    dynamic_keymap_macro_get_buffer(0, DYNAMIC_KEYMAP_MACRO_COUNT, get);
+    if (memcmp(get, check, DYNAMIC_KEYMAP_MACRO_COUNT) == 0) {
+      // We have a blank keymap. Copy ours over.
+      dynamic_keymap_macro_set_buffer(0, sval_macro_size, sval_macros);
+    }
+  }
+#endif
+}
